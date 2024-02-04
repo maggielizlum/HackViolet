@@ -59,14 +59,16 @@ public class NotationCreator extends  ProgramRunner{
         //put a background on any button that the mouse is hovering over
         g.setColor(Color.LIGHT_GRAY);
         if(startButtonBounds.contains(mouseAndKeyboard.getMouseLocation())){
-            g.fillRect(startButtonBounds.x, startButtonBounds.y, startButtonBounds.width, startButtonBounds.height);
+            g.fillRoundRect(startButtonBounds.x, startButtonBounds.y, startButtonBounds.width, startButtonBounds.height, 15, 15);
+            //round rect just puts a bit of curve on the corners
         }else if(pauseButtonBounds.contains(mouseAndKeyboard.getMouseLocation())){
-            g.fillRect(pauseButtonBounds.x, pauseButtonBounds.y, pauseButtonBounds.width, pauseButtonBounds.height);
+            g.fillRoundRect(pauseButtonBounds.x, pauseButtonBounds.y, pauseButtonBounds.width, pauseButtonBounds.height, 15, 15);
         }else if(saveButtonBounds.contains(mouseAndKeyboard.getMouseLocation())){
-            g.fillRect(saveButtonBounds.x, saveButtonBounds.y, saveButtonBounds.width, saveButtonBounds.height);
+            g.fillRoundRect(saveButtonBounds.x, saveButtonBounds.y, saveButtonBounds.width, saveButtonBounds.height, 15, 15);
         }else if(backButtonBounds.contains(mouseAndKeyboard.getMouseLocation())){
-            g.fillRect(backButtonBounds.x, backButtonBounds.y, backButtonBounds.width, backButtonBounds.height);
+            g.fillRoundRect(backButtonBounds.x, backButtonBounds.y, backButtonBounds.width, backButtonBounds.height, 15, 15);
         }
+
 
         //draw buttons and text
         String pitchStr = pitch.getPitch() + " Hz";
