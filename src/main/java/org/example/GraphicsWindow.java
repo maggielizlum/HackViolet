@@ -1,13 +1,5 @@
 package org.example;
-import static org.example.TimeSignature.*;import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -15,8 +7,20 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 
-public class GraphicsWindow extends JPanel{
-    private TimeSignature ts = FOURFOUR;
-    
+public class GraphicsWindow {
 
+    private final Dimension size;
+
+
+    public GraphicsWindow(){
+        size = Toolkit.getDefaultToolkit().getScreenSize();
+        BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
+        Graphics g = image.getGraphics();
+        JFrame frame = new JFrame("Hackviolet Pitch Perfection");
+        frame.setSize(size);
+        frame.setLocation(0, 0 );
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(new Menu(g, frame, image));
+
+    }
 }
