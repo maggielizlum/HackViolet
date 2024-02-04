@@ -15,7 +15,7 @@ public class Pitch {
     private Pipe.SourceChannel ReadPipe;
     private ByteBuffer buffer;
 
-    private int bufferSize = 128;
+    private int bufferSize = 2048;
     Thread process;
 
     public Pitch() {
@@ -42,7 +42,7 @@ public class Pitch {
         ad.addAudioProcessor(pp);
 
 
-        
+
         process = new Thread(ad, "Audio Dispatcher");
         process.start();
 
@@ -53,12 +53,18 @@ public class Pitch {
     }
 
     public void getPitch() {
+        buffer.clear();
+        int bytesRead = 0;
         try{
-            ReadPipe.read(buffer);
+            bytesRead = ReadPipe.read(buffer);
+            buffer.flip();
+            while(buffer.hasRemaining()){
+                double pitch = buffer.getDouble();
+                System.out.println(pitch);
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
-
 
     }
 
@@ -75,15 +81,18 @@ public class Pitch {
         @Override
         public void handlePitch(PitchDetectionResult pitchDetectionResult, AudioEvent audioEvent) {
             double pitchInHz =pitchDetectionResult.getPitch();
-            buffer.putDouble(pitchInHz);
-            while(buffer.hasRemaining()){
-                try {
-                    input.write(buffer);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            buffer.clear();
+            if (pitchInHz != -1) {
+                buffer.putDouble(pitchInHz);
             }
+            buffer.flip();
 
+            try {
+                while(buffer.hasRemaining())
+                    input.write(buffer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
