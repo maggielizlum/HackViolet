@@ -22,6 +22,11 @@ public class PitchTrainer extends ProgramRunner{
     }
 
 
+    /**
+     * Most changes in code should be done in here. This is the method where most of the magic happens
+     * @param g Graphics object that will draw to a buffered Image
+     * @param mouseAndKeyboard a class that has access to many peripheral methods.
+     */
     @Override
     void update(Graphics g, MouseAndKeyboard mouseAndKeyboard) {
         g.setColor(Color.CYAN);
