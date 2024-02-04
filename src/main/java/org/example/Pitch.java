@@ -15,9 +15,15 @@ public class Pitch {
     private Pipe.SourceChannel ReadPipe;
     private ByteBuffer buffer;
 
-    private int bufferSize = 2048;
+    private final int bufferSize = 2048;
     Thread process;
 
+
+    /**
+     * When initialized. The object creates a AudioDispatcher which sets up a runs on a thread taking in default
+     * microphone Audio. This is then piped back to this pitch class using a pipe that is linked between this class and
+     * the pitch handler which is added as a processor to the AudioDispatcher.
+     */
     public Pitch() {
         try {
             ad = AudioDispatcherFactory.fromDefaultMicrophone(2048, 1024);
@@ -44,32 +50,59 @@ public class Pitch {
 
 
         process = new Thread(ad, "Audio Dispatcher");
-        process.start();
-
     }
 
+    /**
+     * This will close the current thread running the audio dispatcher. obviously we don't need it running all the time
+     */
     public void close(){
+
         process.interrupt();
     }
 
-    public void getPitch() {
-        buffer.clear();
-        int bytesRead = 0;
-        try{
-            bytesRead = ReadPipe.read(buffer);
-            buffer.flip();
-            while(buffer.hasRemaining()){
-                double pitch = buffer.getDouble();
-                System.out.println(pitch);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+    /**
+     * This will create a new instance of the thread to run the audio dispatcher
+     */
+    public void run(){
+        process = new Thread(ad, "Audio Dispatcher");
+        process.start();
+    }
 
+    /**
+     * First checks if the process is currently alive, then removes any old information from the buffer, from there it
+     * has to read in the data sent through the buffer. It should not be more than buffer size (currently 2048).
+     * Flipping the buffer is very important to be able to read information from the buffer. Then doubles are read.
+     * They are then averaged. This will keep anyone from getting flooded with more than they can handle. Returns -1 if
+     * the process is thread is not active.
+     */
+    public double getPitch() {
+        if(process.isAlive()){
+            buffer.clear();
+            int bytesRead = 0;
+            double averagePitch = 0;
+            int pitchesRecorded = 0;
+            try {
+                bytesRead = ReadPipe.read(buffer);
+                buffer.flip();
+                while (buffer.hasRemaining()) {
+                    averagePitch += buffer.getDouble();
+                    pitchesRecorded++;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return averagePitch/pitchesRecorded;
+        }
+        return -1;
     }
 
 
-
+    /**
+     * Implementation of the PatchDetectionHandler. In this case. We are sending the information of the detected pitch
+     * as a double through a pipe by first reading it into a buffer. Note that -1 implies no pitch is being registered.
+     * We will not include them in our buffer. Then we will flip the buffer in order for it to be read correctly into
+     * the pipe.
+     */
     private class PitchHandler implements PitchDetectionHandler{
         private Pipe.SinkChannel input;
         private ByteBuffer buffer;
