@@ -83,6 +83,8 @@ public class NotationCreator extends  ProgramRunner{
         if(mouseAndKeyboard.isLeftMouseDown()){
             if(startButtonBounds.contains(mouseAndKeyboard.getMouseLocation())){
                 pitch.run();
+                //new and funny issue: the second you start this method. Nothing else works. Trying to close the tab.
+                //however, you still do get input and you can see the current pitch, so... semi success?
             }else if(pauseButtonBounds.contains(mouseAndKeyboard.getMouseLocation())){
                 pitch.close();
             }else if(saveButtonBounds.contains(mouseAndKeyboard.getMouseLocation())){
