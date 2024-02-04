@@ -8,6 +8,6 @@ public class Main
     {
         //Pitch p = new Pitch();
         PitchGenerator pg = new PitchGenerator();
-        pg.playRandomPitch();
+        pg.guessTheTriad();
     }
 }
